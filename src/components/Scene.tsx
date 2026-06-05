@@ -300,7 +300,7 @@ function ThinRing({ radius, color = '#22d3ee', opacity = 0.15, rotationSpeed = 0
 
   return (
     <mesh ref={ref}>
-      <ringGeometry args={[radius - 0.006, radius + 0.006, 128]} />
+      <ringGeometry args={[radius - 0.006, radius + 0.006, 64]} />
       <meshBasicMaterial 
         ref={materialRef}
         color={color} 
@@ -647,6 +647,7 @@ export default function Scene() {
   return (
     <div className="w-full h-full">
       <Canvas
+        dpr={[1, 2]}
         camera={{ position: [0, 5.2, 8.0], fov: 45 }}
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
       >
