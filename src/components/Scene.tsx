@@ -163,8 +163,8 @@ function EcosystemModuleNode({ name, index, basePosition }: { name: string; inde
       basePosition[2] + targetZOffset
     ];
 
-    // Frame-rate independent lerp (k = 8.0 for smooth, responsive transitions)
-    const lerpFactor = 1 - Math.exp(-8.0 * delta);
+    // Frame-rate independent lerp (k = 15.0 for quick snaps, decreasing active animation duration)
+    const lerpFactor = 1 - Math.exp(-15.0 * delta);
 
     if (groupRef.current) {
       groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, targetPosition[0], lerpFactor);
@@ -419,16 +419,16 @@ function JodeTxCore() {
     const t = timer.getElapsed();
     const progress = scrollProgressRef.current;
 
-    // Rotate core group (base rotation around Y axis on scroll) and apply bobbing
+    // Rotate core group (base rotation around Y axis on scroll) and apply bobbing (decreased bobbing depth/rate)
     if (coreRef.current) {
-      coreRef.current.position.y = Math.sin(t * 1.0) * 0.12;
-      // Frame-rate independent lerp (k = 10.0 for smooth core transitions)
-      const lerpFactor = 1 - Math.exp(-10.0 * delta);
-      coreRef.current.rotation.y = THREE.MathUtils.lerp(coreRef.current.rotation.y, progress * Math.PI * 1.2, lerpFactor);
+      coreRef.current.position.y = Math.sin(t * 0.5) * 0.04;
+      // Frame-rate independent lerp (k = 18.0 for snappy core transitions)
+      const lerpFactor = 1 - Math.exp(-18.0 * delta);
+      coreRef.current.rotation.y = THREE.MathUtils.lerp(coreRef.current.rotation.y, progress * Math.PI * 0.6, lerpFactor);
     }
 
-    // Continuous orbit rotation of service nodes
-    const nodesRotationZ = t * 0.04;
+    // Continuous orbit rotation of service nodes (decreased continuous orbital movement to feel more stable)
+    const nodesRotationZ = t * 0.01;
     if (nodesGroupRef.current) {
       nodesGroupRef.current.rotation.z = nodesRotationZ;
     }
@@ -611,8 +611,8 @@ function CameraController() {
       }
     }
 
-    // Frame-rate independent lerp (k = 9.0 for smooth camera tracking)
-    const lerpFactor = 1 - Math.exp(-9.0 * delta);
+    // Frame-rate independent lerp (k = 15.0 for quick camera snaps, decreasing transition duration)
+    const lerpFactor = 1 - Math.exp(-15.0 * delta);
 
     camera.position.x = THREE.MathUtils.lerp(camera.position.x, targetX, lerpFactor);
     camera.position.y = THREE.MathUtils.lerp(camera.position.y, targetY, lerpFactor);
