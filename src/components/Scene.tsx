@@ -128,7 +128,7 @@ function EcosystemModuleNode({ name, index, basePosition }: { name: string; inde
   const lineRef = useRef<any>(null);
 
   const { timer, scrollProgressRef } = useSharedTimer();
-  const [stateValues, setStateValues] = useState({ activeIndex: -1, progressT: 0 });
+  const [stateValues, setStateValues] = useState({ activeIndex: -1, progressT: 0, isMobile: false });
 
   useFrame((state, delta) => {
     const progress = scrollProgressRef.current;
@@ -137,9 +137,14 @@ function EcosystemModuleNode({ name, index, basePosition }: { name: string; inde
     const isAnyActive = activeIndex !== -1;
 
     const introFadeFactor = Math.min(progress / 0.08, 1);
+    const isMobile = state.size.width < 768;
 
-    if (stateValues.activeIndex !== activeIndex || stateValues.progressT !== introFadeFactor) {
-      setStateValues({ activeIndex, progressT: introFadeFactor });
+    if (
+      stateValues.activeIndex !== activeIndex || 
+      stateValues.progressT !== introFadeFactor || 
+      stateValues.isMobile !== isMobile
+    ) {
+      setStateValues({ activeIndex, progressT: introFadeFactor, isMobile });
     }
 
     // Target positions and scales
@@ -222,6 +227,7 @@ function EcosystemModuleNode({ name, index, basePosition }: { name: string; inde
             index={index} 
             activeIndex={stateValues.activeIndex} 
             progressT={stateValues.progressT} 
+            isMobile={stateValues.isMobile}
           />
         </Html>
       </group>
@@ -229,17 +235,37 @@ function EcosystemModuleNode({ name, index, basePosition }: { name: string; inde
   );
 }
 
-function ActiveLabelWrapper({ name, index, activeIndex, progressT }: { name: string; index: number; activeIndex: number; progressT: number }) {
+function ActiveLabelWrapper({ 
+  name, 
+  index, 
+  activeIndex, 
+  progressT, 
+  isMobile 
+}: { 
+  name: string; 
+  index: number; 
+  activeIndex: number; 
+  progressT: number; 
+  isMobile: boolean;
+}) {
   let opacityClass = 'scale-90';
   let baseOpacity = 0.8;
   
   if (activeIndex === -1) {
+    if (isMobile) {
+      // Hide all labels on mobile when zoomed out to prevent clutter
+      return null;
+    }
     opacityClass = 'scale-100';
     baseOpacity = 0.8;
   } else if (activeIndex === index) {
     opacityClass = 'scale-110 border-cyan-400 text-cyan-900 shadow-md font-bold';
     baseOpacity = 1.0;
   } else {
+    if (isMobile) {
+      // Hide non-active labels completely on mobile
+      return null;
+    }
     opacityClass = 'scale-90 pointer-events-none';
     baseOpacity = 0.2;
   }

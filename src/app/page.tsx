@@ -146,9 +146,9 @@ export default function Home() {
       <div className="absolute top-[40%] right-[-10%] w-[50vw] h-[50vw] cyan-glow pointer-events-none" />
 
       {/* Header */}
-      <header className="fixed top-0 left-0 z-50 flex w-full items-center justify-between px-8 py-4 backdrop-blur-md bg-white/40 border-b border-zinc-200/50">
+      <header className="fixed top-0 left-0 z-50 flex w-full items-center justify-between px-4 md:px-8 py-3 md:py-4 backdrop-blur-md bg-white/40 border-b border-zinc-200/50">
         <div className="flex items-center">
-          <Logo className="h-8 w-auto" />
+          <Logo className="h-6 md:h-8 w-auto" />
         </div>
         <nav className="hidden space-x-6 lg:space-x-8 md:flex text-xs font-semibold uppercase tracking-wider text-zinc-400">
           <span className={`transition-all duration-300 ${activeIndex >= 0 && activeIndex <= 8 ? 'text-cyan-600 font-bold scale-105' : ''}`}>Financial Modules</span>
@@ -156,7 +156,7 @@ export default function Home() {
           <span className={`transition-all duration-300 ${activeIndex >= 9 && activeIndex <= 17 ? 'text-cyan-600 font-bold scale-105' : ''}`}>ERP Ecosystem</span>
         </nav>
         <div>
-          <button className="px-5 py-2 text-xs font-semibold rounded-full border border-zinc-200 bg-white hover:bg-zinc-50 transition-all hover:border-cyan-400 shadow-sm text-zinc-800">
+          <button className="px-3.5 py-1.5 md:px-5 md:py-2 text-[10px] md:text-xs font-semibold rounded-full border border-zinc-200 bg-white hover:bg-zinc-50 transition-all hover:border-cyan-400 shadow-sm text-zinc-800">
             Launch Console
           </button>
         </div>
@@ -194,11 +194,11 @@ export default function Home() {
             const isVisible = activeIndex === idx;
             const isEven = idx % 2 === 0;
             
-            // Mobile: Centered floating glass card at the bottom of the viewport
+            // Mobile: Centered floating glass card at the bottom of the viewport (slightly higher up to avoid indicator)
             // Desktop: Alternating left/right positioning
             const layoutClass = isEven
-              ? 'left-0 right-0 bottom-16 mx-auto md:bottom-auto md:left-0 md:right-auto md:mx-0'
-              : 'left-0 right-0 bottom-16 mx-auto md:bottom-auto md:left-auto md:right-0 md:mx-0';
+              ? 'left-0 right-0 bottom-20 mx-auto md:bottom-auto md:left-0 md:right-auto md:mx-0'
+              : 'left-0 right-0 bottom-20 mx-auto md:bottom-auto md:left-auto md:right-0 md:mx-0';
 
             const transitionClass = isVisible
               ? 'opacity-100 translate-y-0 md:translate-x-0 pointer-events-auto'
@@ -229,7 +229,7 @@ export default function Home() {
                   })}
                 </h2>
 
-                <p className="text-xs md:text-base text-zinc-500 font-light leading-relaxed">
+                <p className="text-sm md:text-base text-zinc-500 font-light leading-relaxed">
                   {service.description}
                 </p>
 
@@ -248,16 +248,32 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Floating Bottom Nav Dots Indicator */}
-      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-20 flex space-x-1.5 p-2 rounded-full bg-white/70 backdrop-blur-md border border-zinc-200/50 shadow-sm max-w-full select-none">
-        {SERVICES.map((_, idx) => (
-          <div 
-            key={idx}
-            className={`h-1.5 rounded-full transition-all duration-500 ${
-              activeIndex === idx ? 'w-6 bg-cyan-500' : 'w-1.5 bg-zinc-300'
-            }`}
-          />
-        ))}
+      {/* Floating Bottom Nav Indicator */}
+      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center p-1 rounded-full bg-white/80 backdrop-blur-md border border-zinc-200/50 shadow-sm max-w-full select-none">
+        {/* Mobile: Compact Pill Indicator */}
+        <div className="flex md:hidden px-3.5 py-1.5 text-xs font-semibold text-zinc-700 items-center space-x-2">
+          <span className="text-cyan-600 font-bold">{activeIndex >= 0 ? (activeIndex + 1 < 10 ? `0${activeIndex + 1}` : activeIndex + 1) : '--'}</span>
+          <span className="text-zinc-300">/</span>
+          <span className="text-zinc-400 font-medium">18</span>
+          {activeIndex >= 0 && (
+            <>
+              <span className="text-zinc-200">|</span>
+              <span className="text-zinc-600 font-bold max-w-[120px] truncate">{SERVICES[activeIndex].name}</span>
+            </>
+          )}
+        </div>
+
+        {/* Desktop: Dots Indicator */}
+        <div className="hidden md:flex space-x-1.5 p-2">
+          {SERVICES.map((_, idx) => (
+            <div 
+              key={idx}
+              className={`h-1.5 rounded-full transition-all duration-500 ${
+                activeIndex === idx ? 'w-6 bg-cyan-500' : 'w-1.5 bg-zinc-300'
+              }`}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Footer */}
