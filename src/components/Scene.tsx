@@ -291,9 +291,8 @@ function ThinRing({ radius, color = '#22d3ee', opacity = 0.15, rotationSpeed = 0
   const materialRef = useRef<THREE.MeshBasicMaterial>(null);
   const { scrollProgressRef, lowPerf } = useSharedTimer();
 
-  if (lowPerf && radius > 2.0) return null;
-
-  useFrame((_, delta) => {
+  useFrame((state, delta) => {
+    if (lowPerf && radius > 2.0) return;
     if (ref.current && rotationSpeed !== 0) {
       ref.current.rotation.z += delta * rotationSpeed;
     }
@@ -304,6 +303,8 @@ function ThinRing({ radius, color = '#22d3ee', opacity = 0.15, rotationSpeed = 0
       materialRef.current.opacity = t * opacity;
     }
   });
+
+  if (lowPerf && radius > 2.0) return null;
 
   return (
     <mesh ref={ref}>
@@ -325,18 +326,18 @@ function NetworkDottedRing({ radius, count = 36, speed = 0.02, color = '#22d3ee'
   const materialRefs = useRef<(THREE.MeshBasicMaterial | null)[]>([]);
   const { scrollProgressRef, lowPerf } = useSharedTimer();
 
-  if (lowPerf) return null;
-  
   const dots = useMemo(() => {
+    if (lowPerf) return [];
     const temp = [];
     for (let i = 0; i < count; i++) {
       const angle = (i * 2 * Math.PI) / count;
       temp.push(new THREE.Vector3(radius * Math.cos(angle), radius * Math.sin(angle), 0));
     }
     return temp;
-  }, [radius, count]);
+  }, [radius, count, lowPerf]);
 
   useFrame((_, delta) => {
+    if (lowPerf) return;
     if (ref.current) {
       ref.current.rotation.z += delta * speed;
     }
@@ -349,6 +350,8 @@ function NetworkDottedRing({ radius, count = 36, speed = 0.02, color = '#22d3ee'
       }
     });
   });
+
+  if (lowPerf) return null;
 
   return (
     <group ref={ref}>

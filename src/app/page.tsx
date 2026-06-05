@@ -107,13 +107,24 @@ const SERVICES = [
 ];
 
 export default function Home() {
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(-1);
 
   useEffect(() => {
     const handleScroll = () => {
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
       const progress = maxScroll > 0 ? window.scrollY / maxScroll : 0;
-      setScrollProgress(progress);
+      
+      // Determine active index matching the Scene controller math
+      let nextActiveIndex = -1;
+      if (progress >= 0.05) {
+        const numServices = 18;
+        const segment = (progress - 0.05) / (0.90 / numServices);
+        const idx = Math.floor(segment);
+        nextActiveIndex = idx >= 0 && idx < numServices ? idx : (idx >= numServices ? numServices - 1 : -1);
+      }
+
+      // Only set state when the index actually changes
+      setActiveIndex((prev) => (prev !== nextActiveIndex ? nextActiveIndex : prev));
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -121,18 +132,6 @@ export default function Home() {
     
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  // Determine active index matching the Scene controller math
-  const activeIndex = (() => {
-    if (scrollProgress < 0.05) return -1;
-    const numServices = 18;
-    const segment = (scrollProgress - 0.05) / (0.90 / numServices);
-    const idx = Math.floor(segment);
-    return idx >= 0 && idx < numServices ? idx : (idx >= numServices ? numServices - 1 : -1);
-  })();
-
-  const t = Math.min(scrollProgress / 0.04, 1);
-  const canvasBlur = (1 - t) * 3; // Starts at 3px blur and gets clear as scroll progress reaches 0.04
 
   return (
     <div className="relative min-h-[2200vh] bg-white text-zinc-900 font-sans selection:bg-cyan-500 selection:text-white overflow-x-hidden">
