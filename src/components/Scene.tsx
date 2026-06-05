@@ -91,9 +91,8 @@ function FloatingParticles({ count = 30 }) {
   const { timer, scrollProgressRef, lowPerf } = useSharedTimer();
   const materialRef = useRef<THREE.PointsMaterial>(null);
 
-  if (lowPerf) return null;
-
   useFrame(() => {
+    if (lowPerf) return;
     if (pointsRef.current) {
       pointsRef.current.rotation.y = timer.getElapsed() * 0.015;
     }
@@ -103,6 +102,8 @@ function FloatingParticles({ count = 30 }) {
       materialRef.current.opacity = t * 0.25;
     }
   });
+
+  if (lowPerf) return null;
 
   return (
     <points ref={pointsRef}>
