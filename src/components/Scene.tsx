@@ -2,7 +2,7 @@
 
 import { Canvas, useFrame, useThree, useLoader } from '@react-three/fiber';
 import { useRef, useMemo, useEffect, useState, createContext, useContext, Suspense } from 'react';
-import { Line, Html, Billboard } from '@react-three/drei';
+import { Line, Html, Billboard, PerformanceMonitor } from '@react-three/drei';
 import * as THREE from 'three';
 
 // Suppress THREE.Clock deprecation warnings originating from react-three-fiber internal usage
@@ -623,6 +623,8 @@ export default function Scene() {
   const timer = useMemo(() => new THREE.Timer(), []);
   const coreRef = useRef<THREE.Group>(null);
   const scrollProgressRef = useRef(0);
+  const [dpr, setDpr] = useState<number | [number, number]>([1, 2]);
+  const [lowPerf, setLowPerf] = useState(false);
 
   useEffect(() => {
     if (typeof document !== 'undefined') {
@@ -647,10 +649,20 @@ export default function Scene() {
   return (
     <div className="w-full h-full">
       <Canvas
-        dpr={[1, 2]}
+        dpr={dpr}
         camera={{ position: [0, 5.2, 8.0], fov: 45 }}
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
       >
+        <PerformanceMonitor 
+          onDecline={() => {
+            setDpr(1);
+            setLowPerf(true);
+          }}
+          onIncline={() => {
+            setDpr([1, 2]);
+            setLowPerf(false);
+          }}
+        />
         <TimerUpdater timer={timer} />
         <TimerContext.Provider value={{ timer, coreRef, scrollProgressRef }}>
           <ambientLight intensity={0.7} />
@@ -661,7 +673,7 @@ export default function Scene() {
           <Suspense fallback={null}>
             <JodeTxCore />
           </Suspense>
-          <FloatingParticles count={45} />
+          <FloatingParticles count={lowPerf ? 15 : 45} />
           <CameraController />
         </TimerContext.Provider>
       </Canvas>
