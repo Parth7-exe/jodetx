@@ -66,10 +66,10 @@ const MODULES = [
 ];
 
 function getActiveIndex(progress: number) {
-  if (progress < 0.10) return -1;
+  if (progress < 0.05) return -1;
   const numServices = 18;
-  // Map scroll progress from 10% to 95% evenly into 18 segments
-  const segment = (progress - 0.10) / (0.85 / numServices);
+  // Map scroll progress from 5% to 95% evenly into 18 segments
+  const segment = (progress - 0.05) / (0.90 / numServices);
   const idx = Math.floor(segment);
   return idx >= 0 && idx < numServices ? idx : (idx >= numServices ? numServices - 1 : -1);
 }
@@ -95,7 +95,7 @@ function FloatingParticles({ count = 30 }) {
       pointsRef.current.rotation.y = timer.getElapsed() * 0.015;
     }
     const progress = scrollProgressRef.current;
-    const t = Math.min(progress / 0.08, 1);
+    const t = Math.min(progress / 0.04, 1);
     if (materialRef.current) {
       materialRef.current.opacity = t * 0.25;
     }
@@ -291,7 +291,7 @@ function ThinRing({ radius, color = '#22d3ee', opacity = 0.15, rotationSpeed = 0
       ref.current.rotation.z += delta * rotationSpeed;
     }
     const progress = scrollProgressRef.current;
-    const t = Math.min(progress / 0.08, 1);
+    const t = Math.min(progress / 0.04, 1);
     
     if (materialRef.current) {
       materialRef.current.opacity = t * opacity;
@@ -332,7 +332,7 @@ function NetworkDottedRing({ radius, count = 36, speed = 0.02, color = '#22d3ee'
       ref.current.rotation.z += delta * speed;
     }
     const progress = scrollProgressRef.current;
-    const t = Math.min(progress / 0.08, 1);
+    const t = Math.min(progress / 0.04, 1);
 
     materialRefs.current.forEach((mat) => {
       if (mat) {
@@ -426,7 +426,7 @@ function JodeTxCore() {
     // Dynamically recede the logo from the camera view to the center of the 3D model
     if (logoRef.current) {
       const cam = state.camera;
-      const progressT = Math.min(progress / 0.08, 1);
+      const progressT = Math.min(progress / 0.04, 1);
       // Interpolate along the camera line of sight (from 50% distance down to 0)
       const lerpFactor = 0.50 * (1 - progressT);
       
@@ -519,7 +519,7 @@ function CameraController() {
 
     if (activeIndex === -1) {
       // Intro/Overview of infrastructure
-      const localProg = progress / 0.10;
+      const localProg = progress / 0.05;
       targetX = 0;
       targetY = THREE.MathUtils.lerp(isMobile ? 6.0 : 5.2, isMobile ? 4.5 : 3.5, localProg);
       targetZ = THREE.MathUtils.lerp(isMobile ? 9.5 : 8.0, isMobile ? 8.5 : 7.0, localProg);

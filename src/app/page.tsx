@@ -124,15 +124,15 @@ export default function Home() {
 
   // Determine active index matching the Scene controller math
   const activeIndex = (() => {
-    if (scrollProgress < 0.10) return -1;
+    if (scrollProgress < 0.05) return -1;
     const numServices = 18;
-    const segment = (scrollProgress - 0.10) / (0.85 / numServices);
+    const segment = (scrollProgress - 0.05) / (0.90 / numServices);
     const idx = Math.floor(segment);
     return idx >= 0 && idx < numServices ? idx : (idx >= numServices ? numServices - 1 : -1);
   })();
 
-  const t = Math.min(scrollProgress / 0.08, 1);
-  const canvasBlur = (1 - t) * 3; // Starts at 3px blur and gets clear as scroll progress reaches 0.08
+  const t = Math.min(scrollProgress / 0.04, 1);
+  const canvasBlur = (1 - t) * 3; // Starts at 3px blur and gets clear as scroll progress reaches 0.04
 
   return (
     <div className="relative min-h-[6000vh] bg-white text-zinc-900 font-sans selection:bg-cyan-500 selection:text-white overflow-x-hidden">
