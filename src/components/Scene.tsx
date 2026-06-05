@@ -632,10 +632,16 @@ export default function Scene() {
   const timer = useMemo(() => new THREE.Timer(), []);
   const coreRef = useRef<THREE.Group>(null);
   const scrollProgressRef = useRef(0);
-  const [dpr, setDpr] = useState<number | [number, number]>([1, 2]);
+  const [dpr, setDpr] = useState<number>(1);
   const [lowPerf, setLowPerf] = useState(false);
 
   useEffect(() => {
+    // Set a static DPR on mount to prevent dynamic canvas resizing (which crashes WebGL on mobile)
+    if (typeof window !== 'undefined') {
+      const isMobile = window.innerWidth < 768;
+      setDpr(isMobile ? 1 : Math.min(window.devicePixelRatio, 1.5));
+    }
+
     if (typeof document !== 'undefined') {
       timer.connect(document);
     }
@@ -664,11 +670,9 @@ export default function Scene() {
       >
         <PerformanceMonitor 
           onDecline={() => {
-            setDpr(1);
             setLowPerf(true);
           }}
           onIncline={() => {
-            setDpr([1, 2]);
             setLowPerf(false);
           }}
         />
