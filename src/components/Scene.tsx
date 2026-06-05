@@ -173,7 +173,7 @@ function EcosystemModuleNode({ name, index, basePosition }: { name: string; inde
     }
 
     if (meshRef.current) {
-      const pulse = 1.0 + Math.sin(timer.getElapsed() * 3 + index) * 0.08;
+      const pulse = 1.0;
       const currentScale = targetScale * pulse;
       meshRef.current.scale.set(currentScale, currentScale, currentScale);
       
@@ -200,6 +200,13 @@ function EcosystemModuleNode({ name, index, basePosition }: { name: string; inde
       lineRef.current.geometry.setPositions([0, 0, 0, currentPos.x, currentPos.y, currentPos.z]);
     }
   });
+
+  const isAnyActive = stateValues.activeIndex !== -1;
+  const isActive = stateValues.activeIndex === index;
+
+  if (isAnyActive && !isActive) {
+    return null;
+  }
 
   return (
     <>
