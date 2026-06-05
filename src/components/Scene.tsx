@@ -631,6 +631,22 @@ function CameraController() {
   return null;
 }
 
+function FrameLimiter({ fps = 30 }: { fps?: number }) {
+  const { gl, scene, camera } = useThree();
+  const lastRenderTime = useRef(0);
+  const interval = 1 / fps;
+
+  useFrame((state) => {
+    const currentTime = state.clock.getElapsedTime();
+    if (currentTime - lastRenderTime.current >= interval) {
+      gl.render(scene, camera);
+      lastRenderTime.current = currentTime;
+    }
+  }, 1); // priority 1 bypasses automatic rendering
+
+  return null;
+}
+
 export default function Scene() {
   const timer = useMemo(() => new THREE.Timer(), []);
   const coreRef = useRef<THREE.Group>(null);
@@ -664,6 +680,8 @@ export default function Scene() {
     };
   }, [timer]);
 
+  const targetFps = typeof window !== 'undefined' && window.innerWidth < 768 ? 30 : 60;
+
   return (
     <div className="w-full h-full">
       <Canvas
@@ -679,6 +697,7 @@ export default function Scene() {
             setLowPerf(false);
           }}
         />
+        <FrameLimiter fps={targetFps} />
         <TimerUpdater timer={timer} />
         <TimerContext.Provider value={{ timer, coreRef, scrollProgressRef, lowPerf }}>
           <ambientLight intensity={0.7} />
