@@ -135,7 +135,7 @@ export default function Home() {
   const canvasBlur = (1 - t) * 3; // Starts at 3px blur and gets clear as scroll progress reaches 0.08
 
   return (
-    <div className="relative min-h-[11000vh] bg-white text-zinc-900 font-sans selection:bg-cyan-500 selection:text-white overflow-x-hidden">
+    <div className="relative min-h-[6000vh] bg-white text-zinc-900 font-sans selection:bg-cyan-500 selection:text-white overflow-x-hidden">
       {/* 1. Viewport-Fixed Background 3D Canvas */}
       <div className="fixed inset-0 w-screen h-screen z-0 pointer-events-none">
         <Scene />
@@ -197,8 +197,8 @@ export default function Home() {
             // Mobile: Centered floating glass card at the bottom of the viewport (slightly higher up to avoid indicator)
             // Desktop: Alternating left/right positioning
             const layoutClass = isEven
-              ? 'left-0 right-0 bottom-20 mx-auto md:bottom-auto md:left-0 md:right-auto md:mx-0'
-              : 'left-0 right-0 bottom-20 mx-auto md:bottom-auto md:left-auto md:right-0 md:mx-0';
+              ? 'left-4 right-4 bottom-20 md:bottom-auto md:left-0 md:right-auto md:mx-0'
+              : 'left-4 right-4 bottom-20 md:bottom-auto md:left-auto md:right-0 md:mx-0';
 
             const transitionClass = isVisible
               ? 'opacity-100 translate-y-0 md:translate-x-0 pointer-events-auto'
@@ -207,9 +207,9 @@ export default function Home() {
             return (
               <div 
                 key={idx}
-                className={`absolute ${layoutClass} w-[calc(100%-1.5rem)] max-w-md md:w-full md:max-w-xl p-6 md:p-0 bg-white/80 md:bg-transparent backdrop-blur-lg md:backdrop-blur-none border border-zinc-200/50 md:border-none rounded-3xl md:rounded-none shadow-xl md:shadow-none space-y-4 md:space-y-5 transition-all duration-700 ease-out ${transitionClass}`}
+                className={`absolute ${layoutClass} w-[calc(100%-2rem)] max-w-md md:w-full md:max-w-xl p-6 md:p-0 bg-white/80 md:bg-transparent backdrop-blur-lg md:backdrop-blur-none border border-zinc-200/50 md:border-none rounded-3xl md:rounded-none shadow-xl md:shadow-none space-y-4 md:space-y-5 transition-all duration-700 ease-out ${transitionClass}`}
               >
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center justify-center md:justify-start space-x-3">
                   <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-cyan-700 bg-cyan-50 border border-cyan-200/50">
                     Module {idx + 1 < 10 ? `0${idx + 1}` : idx + 1}
                   </span>
@@ -218,7 +218,7 @@ export default function Home() {
                   </span>
                 </div>
                 
-                <h2 className="text-3xl md:text-5xl font-light leading-tight text-zinc-950">
+                <h2 className="text-3xl md:text-5xl font-light leading-tight text-zinc-950 text-center md:text-left">
                   {service.name.split(' ').map((word, wIdx) => {
                     const isLast = wIdx === service.name.split(' ').length - 1;
                     return (
@@ -229,11 +229,11 @@ export default function Home() {
                   })}
                 </h2>
 
-                <p className="text-sm md:text-base text-zinc-500 font-light leading-relaxed">
+                <p className="text-sm md:text-base text-zinc-500 font-light leading-relaxed text-center md:text-left">
                   {service.description}
                 </p>
 
-                <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 pt-2 md:pt-4">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 pt-2 md:pt-4 justify-center md:justify-start">
                   <button className="h-10 px-6 rounded-full bg-zinc-950 text-xs font-semibold text-white hover:bg-zinc-800 transition-colors shadow-md">
                     Request API Integration
                   </button>
