@@ -373,15 +373,16 @@ function NetworkDottedRing({ radius, count = 36, speed = 0.02, color = '#22d3ee'
 
 function JodeTxCore() {
   const { timer, coreRef, scrollProgressRef, lowPerf } = useSharedTimer();
-  const logoTexture = useLoader(THREE.TextureLoader, '/jodetxlong.png');
   const ecosystemTextRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (logoTexture) {
-      logoTexture.minFilter = THREE.LinearFilter;
-      logoTexture.magFilter = THREE.LinearFilter;
-    }
-  }, [logoTexture]);
+  const logoTexture = useMemo(() => {
+    if (typeof window === 'undefined') return null;
+    const loader = new THREE.TextureLoader();
+    const tex = loader.load('/jodetxlong.png');
+    tex.minFilter = THREE.LinearFilter;
+    tex.magFilter = THREE.LinearFilter;
+    return tex;
+  }, []);
 
   const haloTexture = useMemo(() => {
     if (typeof window === 'undefined') return null;
@@ -430,8 +431,9 @@ function JodeTxCore() {
       coreRef.current.rotation.y = THREE.MathUtils.lerp(coreRef.current.rotation.y, progress * Math.PI * 0.6, lerpFactor);
     }
 
-    // Continuous orbit rotation of service nodes (decreased continuous orbital movement to feel more stable)
-    const nodesRotationZ = t * 0.01;
+    // Continuous orbit rotation of service nodes (paused when active module is selected to prevent camera chase lag)
+    const activeIndex = getActiveIndex(progress);
+    const nodesRotationZ = activeIndex === -1 ? t * 0.01 : 0;
     if (nodesGroupRef.current) {
       nodesGroupRef.current.rotation.z = nodesRotationZ;
     }
@@ -577,7 +579,7 @@ function CameraController() {
 
       // Calculate actual world position of the active node by applying nodes orbit and core rotation & position
       const activeNodeWorldPos = new THREE.Vector3(nodeX, nodeY, nodeZActive);
-      const nodesRotationZ = t * 0.01; // rotate with orbit speed (matched with JodeTxCore)
+      const nodesRotationZ = activeIndex === -1 ? t * 0.01 : 0; // rotate with orbit speed (matched with JodeTxCore)
       activeNodeWorldPos.applyAxisAngle(new THREE.Vector3(0, 0, 1), nodesRotationZ);
 
       if (coreRef.current) {
@@ -705,9 +707,7 @@ export default function Scene() {
           <pointLight position={[-5, -5, -5]} intensity={0.5} color="#0891b2" />
           <pointLight position={[0, 0, 3]} intensity={1.5} color="#22d3ee" />
           
-          <Suspense fallback={null}>
-            <JodeTxCore />
-          </Suspense>
+          <JodeTxCore />
           <FloatingParticles count={lowPerf ? 15 : 45} />
           <CameraController />
         </TimerContext.Provider>
