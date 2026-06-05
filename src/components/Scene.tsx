@@ -362,6 +362,7 @@ function NetworkDottedRing({ radius, count = 36, speed = 0.02, color = '#22d3ee'
 function JodeTxCore() {
   const { timer, coreRef, scrollProgressRef } = useSharedTimer();
   const logoTexture = useLoader(THREE.TextureLoader, '/jodetxlong.png');
+  const ecosystemTextRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (logoTexture) {
@@ -437,6 +438,13 @@ function JodeTxCore() {
       // Scale the logo to be smaller: starts at 0.80, recedes to 0.55 at center
       const scale = 0.55 + (1 - progressT) * 0.25;
       logoRef.current.scale.set(scale, scale, scale);
+
+      // Fade out "Ecosystem" text as logo recedes
+      if (ecosystemTextRef.current) {
+        const ecosystemOpacity = Math.max(0, 1 - progressT * 2.0);
+        ecosystemTextRef.current.style.opacity = ecosystemOpacity.toString();
+        ecosystemTextRef.current.style.transform = `scale(${scale})`;
+      }
     }
   });
 
@@ -471,6 +479,23 @@ function JodeTxCore() {
               />
             </mesh>
           )}
+        </Billboard>
+        {/* "Ecosystem" text Billboard/HTML that moves and scales with the logo */}
+        <Billboard position={[0, -0.65, 0]}>
+          <Html center distanceFactor={7}>
+            <div 
+              ref={ecosystemTextRef}
+              className="text-2xl md:text-4xl font-semibold tracking-wide select-none"
+              style={{
+                color: '#1a2744',
+                opacity: 1,
+                transition: 'opacity 0.05s ease-out',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              Ecosystem
+            </div>
+          </Html>
         </Billboard>
       </group>
 

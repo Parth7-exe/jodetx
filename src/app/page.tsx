@@ -162,30 +162,6 @@ export default function Home() {
         </div>
       </header>
 
-      {/* INTRO COVER OVERLAY — 'Ecosystem' text fades out early on scroll while the single 3D logo in the Canvas recedes */}
-      {(() => {
-        // Ecosystem word fades out early and smoothly
-        const ecosystemOpacity = Math.max(0, 1 - t * 2.0);
-        const translateY = t * 50; // Slides down slightly as it fades
-
-        return (          <div 
-            className="fixed inset-0 flex flex-col items-center justify-center pointer-events-none z-15"
-          >
-            <span 
-              className="text-2xl md:text-4xl font-semibold tracking-wide mt-36 md:mt-48" 
-              style={{ 
-                color: '#1a2744',
-                opacity: ecosystemOpacity,
-                transform: `translateY(${translateY}px)`,
-                willChange: 'opacity, transform',
-              }}
-            >
-              Ecosystem
-            </span>
-          </div>
-        );
-      })()}
-
       {/* FIXED VIEWPORT EDITORIAL STORYTELLING NARRATIVES */}
       <div className="fixed inset-0 z-10 flex items-center p-4 md:p-16 lg:p-24 pointer-events-none">
         <div className="w-full max-w-7xl mx-auto relative h-[75vh] md:h-[60vh] flex items-end md:items-center">
