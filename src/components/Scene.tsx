@@ -25,6 +25,7 @@ interface TimerContextType {
   timer: THREE.Timer;
   coreRef: React.RefObject<THREE.Group | null>;
   scrollProgressRef: React.MutableRefObject<number>;
+  lowPerf: boolean;
 }
 
 const TimerContext = createContext<TimerContextType | null>(null);
@@ -87,8 +88,10 @@ function FloatingParticles({ count = 30 }) {
     return temp;
   }, [count]);
 
-  const { timer, scrollProgressRef } = useSharedTimer();
+  const { timer, scrollProgressRef, lowPerf } = useSharedTimer();
   const materialRef = useRef<THREE.PointsMaterial>(null);
+
+  if (lowPerf) return null;
 
   useFrame(() => {
     if (pointsRef.current) {
@@ -127,7 +130,7 @@ function EcosystemModuleNode({ name, index, basePosition }: { name: string; inde
   const glowRingRef = useRef<THREE.Mesh>(null);
   const lineRef = useRef<any>(null);
 
-  const { timer, scrollProgressRef } = useSharedTimer();
+  const { timer, scrollProgressRef, lowPerf } = useSharedTimer();
   const [stateValues, setStateValues] = useState({ activeIndex: -1, progressT: 0, isMobile: false });
 
   useFrame((state, delta) => {
@@ -221,15 +224,17 @@ function EcosystemModuleNode({ name, index, basePosition }: { name: string; inde
           <meshBasicMaterial color="#22d3ee" transparent opacity={0.3} />
         </mesh>
 
-        <Html position={[0, 0.28, 0]} center distanceFactor={7}>
-          <ActiveLabelWrapper 
-            name={name} 
-            index={index} 
-            activeIndex={stateValues.activeIndex} 
-            progressT={stateValues.progressT} 
-            isMobile={stateValues.isMobile}
-          />
-        </Html>
+        {(!stateValues.isMobile || stateValues.activeIndex === index) && (
+          <Html position={[0, 0.28, 0]} center distanceFactor={7}>
+            <ActiveLabelWrapper 
+              name={name} 
+              index={index} 
+              activeIndex={stateValues.activeIndex} 
+              progressT={stateValues.progressT} 
+              isMobile={stateValues.isMobile}
+            />
+          </Html>
+        )}
       </group>
     </>
   );
@@ -284,7 +289,9 @@ function ActiveLabelWrapper({
 function ThinRing({ radius, color = '#22d3ee', opacity = 0.15, rotationSpeed = 0 }: { radius: number; color?: string; opacity?: number; rotationSpeed?: number }) {
   const ref = useRef<THREE.Mesh>(null);
   const materialRef = useRef<THREE.MeshBasicMaterial>(null);
-  const { scrollProgressRef } = useSharedTimer();
+  const { scrollProgressRef, lowPerf } = useSharedTimer();
+
+  if (lowPerf && radius > 2.0) return null;
 
   useFrame((_, delta) => {
     if (ref.current && rotationSpeed !== 0) {
@@ -316,7 +323,9 @@ function ThinRing({ radius, color = '#22d3ee', opacity = 0.15, rotationSpeed = 0
 function NetworkDottedRing({ radius, count = 36, speed = 0.02, color = '#22d3ee', opacity = 0.2 }: { radius: number; count?: number; speed?: number; color?: string; opacity?: number }) {
   const ref = useRef<THREE.Group>(null);
   const materialRefs = useRef<(THREE.MeshBasicMaterial | null)[]>([]);
-  const { scrollProgressRef } = useSharedTimer();
+  const { scrollProgressRef, lowPerf } = useSharedTimer();
+
+  if (lowPerf) return null;
   
   const dots = useMemo(() => {
     const temp = [];
@@ -360,7 +369,7 @@ function NetworkDottedRing({ radius, count = 36, speed = 0.02, color = '#22d3ee'
 }
 
 function JodeTxCore() {
-  const { timer, coreRef, scrollProgressRef } = useSharedTimer();
+  const { timer, coreRef, scrollProgressRef, lowPerf } = useSharedTimer();
   const logoTexture = useLoader(THREE.TextureLoader, '/jodetxlong.png');
   const ecosystemTextRef = useRef<HTMLDivElement>(null);
 
@@ -664,7 +673,7 @@ export default function Scene() {
           }}
         />
         <TimerUpdater timer={timer} />
-        <TimerContext.Provider value={{ timer, coreRef, scrollProgressRef }}>
+        <TimerContext.Provider value={{ timer, coreRef, scrollProgressRef, lowPerf }}>
           <ambientLight intensity={0.7} />
           <directionalLight position={[5, 10, 5]} intensity={1.5} color="#e0f7fa" />
           <pointLight position={[-5, -5, -5]} intensity={0.5} color="#0891b2" />
