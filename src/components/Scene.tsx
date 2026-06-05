@@ -163,8 +163,8 @@ function EcosystemModuleNode({ name, index, basePosition }: { name: string; inde
       basePosition[2] + targetZOffset
     ];
 
-    // Frame-rate independent lerp (k = 15.0 for quick snaps, decreasing active animation duration)
-    const lerpFactor = 1 - Math.exp(-15.0 * delta);
+    // Frame-rate independent lerp (k = 5.0 for smooth, floaty transitions)
+    const lerpFactor = 1 - Math.exp(-5.0 * delta);
 
     if (groupRef.current) {
       groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, targetPosition[0], lerpFactor);
@@ -422,8 +422,8 @@ function JodeTxCore() {
     // Rotate core group (base rotation around Y axis on scroll) and apply bobbing (decreased bobbing depth/rate)
     if (coreRef.current) {
       coreRef.current.position.y = Math.sin(t * 0.5) * 0.04;
-      // Frame-rate independent lerp (k = 18.0 for snappy core transitions)
-      const lerpFactor = 1 - Math.exp(-18.0 * delta);
+      // Frame-rate independent lerp (k = 6.0 for fluid core transitions)
+      const lerpFactor = 1 - Math.exp(-6.0 * delta);
       coreRef.current.rotation.y = THREE.MathUtils.lerp(coreRef.current.rotation.y, progress * Math.PI * 0.6, lerpFactor);
     }
 
@@ -574,7 +574,7 @@ function CameraController() {
 
       // Calculate actual world position of the active node by applying nodes orbit and core rotation & position
       const activeNodeWorldPos = new THREE.Vector3(nodeX, nodeY, nodeZActive);
-      const nodesRotationZ = t * 0.04; // rotate with orbit speed
+      const nodesRotationZ = t * 0.01; // rotate with orbit speed (matched with JodeTxCore)
       activeNodeWorldPos.applyAxisAngle(new THREE.Vector3(0, 0, 1), nodesRotationZ);
 
       if (coreRef.current) {
@@ -611,8 +611,8 @@ function CameraController() {
       }
     }
 
-    // Frame-rate independent lerp (k = 15.0 for quick camera snaps, decreasing transition duration)
-    const lerpFactor = 1 - Math.exp(-15.0 * delta);
+    // Frame-rate independent lerp (k = 5.5 for smooth camera tracking)
+    const lerpFactor = 1 - Math.exp(-5.5 * delta);
 
     camera.position.x = THREE.MathUtils.lerp(camera.position.x, targetX, lerpFactor);
     camera.position.y = THREE.MathUtils.lerp(camera.position.y, targetY, lerpFactor);

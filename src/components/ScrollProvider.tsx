@@ -8,13 +8,13 @@ export default function ScrollProvider({ children }: { children: React.ReactNode
 
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 0.5,
+      duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 2.2,
-      touchMultiplier: 4.0,
+      wheelMultiplier: 1.8,
+      touchMultiplier: 2.0,
     });
 
     lenisRef.current = lenis;
