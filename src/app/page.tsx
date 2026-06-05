@@ -135,7 +135,7 @@ export default function Home() {
   const canvasBlur = (1 - t) * 3; // Starts at 3px blur and gets clear as scroll progress reaches 0.04
 
   return (
-    <div className="relative min-h-[6000vh] bg-white text-zinc-900 font-sans selection:bg-cyan-500 selection:text-white overflow-x-hidden">
+    <div className="relative min-h-[3000vh] bg-white text-zinc-900 font-sans selection:bg-cyan-500 selection:text-white overflow-x-hidden">
       {/* 1. Viewport-Fixed Background 3D Canvas */}
       <div className="fixed inset-0 w-screen h-screen z-0 pointer-events-none">
         <Scene />

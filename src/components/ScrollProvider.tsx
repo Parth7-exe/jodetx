@@ -14,7 +14,7 @@ export default function ScrollProvider({ children }: { children: React.ReactNode
       gestureOrientation: 'vertical',
       smoothWheel: true,
       wheelMultiplier: 2.2,
-      touchMultiplier: 1.6,
+      touchMultiplier: 3.2,
     });
 
     lenisRef.current = lenis;
